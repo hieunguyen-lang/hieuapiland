@@ -10,7 +10,7 @@ from source.main.model.AuctionVideos import AuctionVideos
 from source.main.model.provinces import Provinces
 from source.main.model.districts import Districts
 from source.main.function.forum import viewPost, deletePost
-from sqlalchemy import func
+from sqlalchemy import func, and_, or_, not_
 from datetime import datetime
 from sqlalchemy.sql import label, text
 
@@ -167,4 +167,45 @@ def filterAuctionbyprovince():
                          }
                     ),500)
 def filterAuctionbytime():
-    pass
+    try:
+        if not request.json:
+            return make_response(
+                jsonify(
+                        {"status": 400, "message": "Bad Request - No JSON data provided"}
+                    ),
+                    400,
+                )
+        if request.json:    
+            json_data = request.json
+            required_fields = [
+                "StartTime",
+                "EndTime", 
+            ]
+            for field in required_fields:
+                if field not in json_data:
+                    return make_response(
+                        jsonify(
+                            {"status": 400, "message": f"Missing required field: {field}"}
+                        ),
+                        400,
+                    )
+        conflicting_auctions = LandAuctions.query.filter(
+            or_(
+                and_(LandAuctions.StartTime <= json_data["StartTime"], LandAuctions.EndTime >= json_data["EndTime"]),
+                and_(LandAuctions.StartTime <= json_data["StartTime"], LandAuctions.EndTime >= json_data["EndTime"]),
+                and_(LandAuctions.StartTime >= json_data["StartTime"], LandAuctions.EndTime <= json_data["EndTime"])
+            )
+        ).subquery()
+
+        
+    except Exception as e:
+        print(e)
+        err =str(e)
+        return make_response(
+                    jsonify(
+                            {
+                                'status': 500, 
+                                'message': 'An error occurred while filter!',
+                                'error': err
+                            }
+                        ),500)

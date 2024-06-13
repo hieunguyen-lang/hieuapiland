@@ -20,11 +20,20 @@ def refresh_token():
     try:
         current_user = get_jwt_identity()
         CurrentUserID = current_user.get('UserID')
+        print(CurrentUserID)
         refresh_token = request.cookies.get('refresh_token_cookie')
-        token_entry = RefreshTokens.query.filter_by(UserID=CurrentUserID, token=refresh_token).first()
+        refreshtokens = RefreshTokens.query.filter(
+            or_(
+                RefreshTokens.UserID == CurrentUserID,
+                RefreshTokens.token == refresh_token
+            )
+        ).first()
+        token_entry = refreshtokens.token
         print(token_entry)
-        if token_entry:
-            if not token_entry or token_entry.expires_at < datetime.now():
+        if not refreshtokens:
+            return jsonify({"message": "Invalid refresh token"}), 401
+        if refreshtokens:
+            if not refreshtokens or refreshtokens.expires_at < datetime.now():
                 return jsonify({"Refresh token is invalid or has expired"})
 
             new_access_token = create_access_token(identity=current_user)

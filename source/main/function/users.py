@@ -234,10 +234,10 @@ def checkOnline(UserID):
 def checkOnlineForAllUsers():
     try:
         users = Users.query.all()
-
         online_users = []
         offline_users = []
-
+        count_offline = 0 
+        count_online = 0 
         for user in users:
             if isUserOffline(user):
                 time_since_last_activity = datetime.now() - user.LastActivityTime
@@ -249,13 +249,16 @@ def checkOnlineForAllUsers():
                         "OfflineTime": formatted_time,
                     }
                 )
+                count_offline+=1
             else:
                 online_users.append({"UserID": user.UserID, "Username": user.Username})
-
+                count_online+=1
         response_data = {
             "Status": 200,
+            "count_online": count_online,
             "OnlineUsers": online_users,
             "OfflineUsers": offline_users,
+            "count_offline": count_offline
         }
 
         return make_response(jsonify(response_data), 200)
@@ -644,7 +647,6 @@ def loginUser():
                 location_login = Locations.query.filter_by(
                     UserID=user_id, Type="login"
                 ).first()
-                expires_at = datetime.now() + app.config["JWT_REFRESH_TOKEN_EXPIRES"]
                 refresh_token = create_refresh_token(
                     identity={
                         "UserID": user.UserID,
@@ -661,15 +663,10 @@ def loginUser():
                 )
                 refreshtoken = RefreshTokens(
                     UserID=user_id,
-                    token=create_refresh_token(
-                        identity={
-                            "UserID": user.UserID,
-                            "Email": user.Email,
-                            "Role": user.Role,
-                        }
-                    ),
+                    token=refresh_token,
                     expires_at=datetime.now() + app.config["JWT_REFRESH_TOKEN_EXPIRES"],
                 )
+                
                 db.session.add(refreshtoken)
                 db.session.commit()
                 if location_login:

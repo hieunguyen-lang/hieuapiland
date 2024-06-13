@@ -26,7 +26,7 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "mysql+pymysql://sonpro:Ratiendi89@localhost/landinvest?charset=utf8mb4"
+    "mysql+pymysql://root:password@localhost/landinvest?charset=utf8mb4"
 )
 app.config["SQLAlCHEMY_TRACK_MODIFICATIONS"] = True
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
