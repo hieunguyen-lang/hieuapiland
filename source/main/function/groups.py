@@ -13,7 +13,7 @@ from sqlalchemy.sql import label, text
 
 def singleGroup(GroupID):
     try:
-        group = Groups.query.filter(Groups.GroupID == GroupID)
+        group = Groups.query.filter(Groups.GroupID == GroupID).all()
         DataGroupJson = []
         for item in group:
             data = dict()
@@ -21,7 +21,7 @@ def singleGroup(GroupID):
             data["UserID"] = item.UserID
             data["BoxID"] = item.BoxID
             data["GroupName"] = item.GroupName
-            data["CreateAt"] = item.CreateAt
+            data["CreateAt"] = item.CreateAt.strftime('%Y-%m-%dT%H:%M:%SZ')
             data["avatarLink"] = item.avatarLink
             """
             if item.avatarLink:
@@ -45,7 +45,7 @@ def allGroup(BoxID):
             data["UserID"] = item.UserID
             data["BoxID"] = item.BoxID
             data["GroupName"] = item.GroupName
-            data["CreateAt"] = item.CreateAt
+            data["CreateAt"] = item.CreateAt.strftime('%Y-%m-%dT%H:%M:%SZ')
             data["avatarLink"] = item.avatarLink
             """if row.avatarLink:
                 group["avatarLink"] = str(base64.b64encode(row.avatarLink).decode('utf-8'))
@@ -119,7 +119,7 @@ def searchPostInGroup(GroupID, key):
                     "PostLatitude": post.ForumPosts.PostLatitude,
                     "PostLongitude": post.ForumPosts.PostLongitude,
                     "GroupName": post.Groups.GroupName,
-                    "CreateAt": post.Groups.CreateAt,
+                    "CreateAt": post.Groups.CreateAt.strftime('%Y-%m-%dT%H:%M:%SZ'),
                 }
                 for post in posts
             ]

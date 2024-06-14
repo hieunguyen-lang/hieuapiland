@@ -1,8 +1,8 @@
-from flask import jsonify, request, make_response
+from flask import jsonify, request, make_response, send_from_directory
 from source.main.model.zonings import Zonings
 from source.main.model.districts import Districts
 from source import db
-
+from source import app
 def viewZonings():
     try:
         name = request.args.get("name")
@@ -57,8 +57,12 @@ def viewZoningsofDistrict():
             result["Imglng"] = item.Imglng
             result["Imgwidth"] = item.Imgwidth
             result["Imgheight"] = item.Imgheight
+            result["Path"] = item.Path
             ListJsonDZonings.append(result)
         return ListJsonDZonings
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 500, 'message': 'An error occurred while list Zoning Img!'}), 500)
+
+def get_image(path):
+    return send_from_directory(app.config['Image_FOLDER'], path)

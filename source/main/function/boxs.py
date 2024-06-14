@@ -124,7 +124,7 @@ def viewListBox():
                 Boxdata["BoxID"] = item.BoxID
                 Boxdata["UserID"] = item.UserID
                 Boxdata["BoxName"] = item.BoxName
-                Boxdata["CreateAt"] = item.CreateAt
+                Boxdata["CreateAt"] = item.CreateAt.strftime('%Y-%m-%dT%H:%M:%SZ')
                 Boxdata["Description"] = item.Description
                 Boxdata["avatarLink"] = item.avatarLink
                 ListBoxJson.append(Boxdata)

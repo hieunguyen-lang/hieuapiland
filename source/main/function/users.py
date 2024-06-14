@@ -686,7 +686,7 @@ def loginUser():
                     db.session.add(location_login)
 
                 db.session.commit()
-                response = jsonify({"msg": "login successful"})
+                response = jsonify({"msg": "login successful","refreshtoken": refresh_token, "access_token": access_token})
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
                 return response

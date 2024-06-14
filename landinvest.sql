@@ -1153,6 +1153,8 @@ ALTER TABLE `Favorite`
 ALTER TABLE `ForumPhotos`
   ADD CONSTRAINT `ForumPhotos_ibfk_1` FOREIGN KEY (`PostID`) REFERENCES `ForumPosts` (`PostID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `AuctionImgs`
+  ADD CONSTRAINT `AuctionImgs_ibfk_1` FOREIGN KEY (`LandAuctionID`) REFERENCES `LandAuctions` (`LandAuctionID`) ON DELETE CASCADE ON UPDATE CASCADE;
 --
 -- Các ràng buộc cho bảng `ForumPosts`
 --

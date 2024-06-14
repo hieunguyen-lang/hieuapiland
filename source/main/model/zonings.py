@@ -11,3 +11,4 @@ class Zonings(db.Model):
     Imgwidth = db.Column(db.String(30), nullable=False)
     Imgheight = db.Column(db.String(30), nullable=False)
     Description = db.Column(db.String(250), nullable=False)
+    Path = db.Column(db.String(200), nullable=True)
