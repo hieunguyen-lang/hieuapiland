@@ -41,7 +41,7 @@ app.config["MAIL_USE_SSL"] = True
 jwt = JWTManager(app)
 
 
-@app.after_request
+"""@app.after_request
 def refresh_expiring_jwts(response):
     try:
         exp_timestamp = get_jwt()["exp"]
@@ -55,7 +55,7 @@ def refresh_expiring_jwts(response):
         return response
     except (RuntimeError, KeyError):
         # Case where there is not a valid JWT. Just return the original response
-        return response
+        return response"""
 
 
 connected_clients = []

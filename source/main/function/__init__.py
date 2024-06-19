@@ -16,27 +16,25 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, set_access
 def reader():
     return '<a href="/docs">/docs</a> to read the documentation'
 
-def refresh_token():
+def refresh_token(UserID):
     try:
-        current_user = get_jwt_identity()
-        CurrentUserID = current_user.get('UserID')
-        print(CurrentUserID)
         refresh_token = request.cookies.get('refresh_token_cookie')
         refreshtokens = RefreshTokens.query.filter(
             or_(
-                RefreshTokens.UserID == CurrentUserID,
+                RefreshTokens.UserID == UserID,
                 RefreshTokens.token == refresh_token
             )
         ).first()
         token_entry = refreshtokens.token
         print(token_entry)
+        currentuser = Users.query.filter(Users.UserID == UserID).first()
         if not refreshtokens:
             return jsonify({"message": "Invalid refresh token"}), 401
         if refreshtokens:
             if not refreshtokens or refreshtokens.expires_at < datetime.now():
                 return jsonify({"Refresh token is invalid or has expired"})
 
-            new_access_token = create_access_token(identity=current_user)
+            new_access_token = create_access_token(identity={"UserID":UserID, "Email": currentuser.Email, "Role": currentuser.Role})
             response = jsonify({
                 "msg": "refresh successful",
                 "access_token": new_access_token
