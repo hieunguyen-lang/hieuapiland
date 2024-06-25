@@ -14,5 +14,8 @@ app.add_url_rule('/api/box/viewlist_box', methods=['GET'], view_func=viewListBox
 #Change Box Name
 app.add_url_rule('/api/box/change_boxname/<int:BoxID>', methods=['PATCH'], view_func=jwt_required()(changeBoxName))
 
+#UPdate Box
+app.add_url_rule('/api/box/update_box/<int:BoxID>', methods=['PATCH'], view_func=jwt_required()(updateBox))
+
 #Change Box Description
 app.add_url_rule('/api/box/change_description/<int:BoxID>', methods=['PATCH'], view_func=jwt_required()(changeBoxDescription))

@@ -356,67 +356,39 @@ def removeFavorite(PostID):
         )
 
 
-def getListPost(GroupID, PostFrom, PostTo, UserID):
+def getListPost(GroupID):
     try:
-        offset = (PostFrom - 1) * PostTo
-        
-        posts = ForumPosts.query.filter(ForumPosts.GroupID == GroupID).order_by(ForumPosts.PostTime.desc()).offset(offset).limit(PostTo).all()
-        
-        list_post = []
-        for post in posts: 
-            post_user = Users.query.get(post.UserID)
-            post_photo = ForumPhotos.query.filter(ForumPhotos.PostID == post.PostID).first()
-            post_first_comment = PostComments.query.filter(PostComments.PostID == post.PostID).first()
-            post_favorite = Favorite.query.filter(Favorite.PostID == post.PostID)
-            post_favorite_count = post_favorite.count()
-            checkUserID = post_favorite.filter(Favorite.UserID == UserID).first()
-            isFavorited = checkUserID is not None
-            first_comment = {}
-            if post_first_comment:
-                first_comment_user = Users.query.get(post.UserID)
-                comment_photo = CommentPhotos.query.get(post_first_comment.CommentID)
-                if comment_photo:
-                    first_comment.update({
-                        "Content":post_first_comment.Content,
-                        "Photo":byteToString(comment_photo.PhotoURL),
-                        "UserFullName":first_comment_user.FullName,
-                        "Username": first_comment_user.Username,
-                        "Avatar": byteToString(first_comment_user.avatarLink),
-                        "Time": post_first_comment.CommentTime,
-                        "TimeUpdated": post_first_comment.CommentUpdateTime
-                    })
-                else:
-                    first_comment.update({
-                        "Content":post_first_comment.Content,
-                        "Photo": None,
-                        "UserFullName":first_comment_user.FullName,
-                        "Username": first_comment_user.Username,
-                        "Avatar": byteToString(first_comment_user.avatarLink),
-                        "Time": post_first_comment.CommentTime,
-                        "TimeUpdated": post_first_comment.CommentUpdateTime
-                    })
-
-            list_post.append({
-                "PostID": post.PostID,
-                "UserID": post.UserID,
-                "UserFullName": post_user.FullName,
-                "Username": post_user.Username,
-                "Avatar": byteToString(post_user.avatarLink),
-                "GroupID": post.GroupID,
-                "FirstComment":first_comment,
-                "Title": post.Title,
-                "Content": post.Content,
-                "PostTime": post.PostTime,
-                "IPPosted": post.IPPosted,
-                "PostLatitude": post.PostLatitude,
-                "PostLongitude": post.PostLongitude,
-                "UpdatePostAt": post.UpdatePostAt,
-                "FavoriteCount": post_favorite_count,
-                "IsFavorited": isFavorited,
-                "Photo": byteToString(post_photo.PhotoURL) if post_photo else None,
-            })
-        
-        return jsonify({'status': 200, 'list_posts': list_post})
+        listposts = ForumPosts.query.filter(ForumPosts.GroupID == GroupID).all()
+        listpostdata = []
+        for item in listposts:
+            data = dict()
+            data["PostID"] = item.PostID
+            data["UserID"] = item.UserID
+            data["GroupID"] = item.GroupID
+            data["Title"] = item.Title
+            data["Content"] = item.Content
+            data["PostTime"] = item.PostTime
+            data["UpdatePostAt"] = item.UpdatePostAt
+            listpostdata.append(data)
+        return listpostdata
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 500, 'message': 'An error occurred!'+ str(e)}), 500)  
+def getListAllPost():
+    try:
+        listposts = ForumPosts.query.all()
+        listpostdata = []
+        for item in listposts:
+            data = dict()
+            data["PostID"] = item.PostID
+            data["UserID"] = item.UserID
+            data["GroupID"] = item.GroupID
+            data["Title"] = item.Title
+            data["Content"] = item.Content
+            data["PostTime"] = item.PostTime
+            data["UpdatePostAt"] = item.UpdatePostAt
+            listpostdata.append(data)
+        return listpostdata
+    except Exception as e:
+        print(e)
+        return make_response(jsonify({'status': 500, 'message': 'An error occurred!'+ str(e)}), 500) 

@@ -715,6 +715,7 @@ def logout():
         db.session.delete(refreshtoken)
         db.session.commit()
         unset_jwt_cookies(response)
+        
     return response
 
 

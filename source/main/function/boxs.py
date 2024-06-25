@@ -134,6 +134,55 @@ def viewListBox():
         print(f"Error: {e}")
         error = "An error occurred " + str(e)
         return {"status": 500, "message": error}
+    
+    
+def updateBox(BoxID):
+    try:
+        current_user = get_jwt_identity()
+        user_role = current_user.get('Role')
+        if user_role == 1:
+            json_data = request.json
+            if json_data:
+                box = Boxs.query.filter(Boxs.BoxID == BoxID).first()
+                if box:
+                    box.BoxName = json_data["BoxName"]
+                    box.Description = json_data["Description"]
+                    if json_data["avatarLink"]:
+                        box.avatarLink = json_data["avatarLink"]
+                    else:
+                        box.avatarLink = None
+                    db.session.commit()
+                else: 
+                    return make_response(
+                    jsonify(
+                        {"status": 400, "message": "box field has no data"}
+                    ),
+                    400,
+                )
+            else:
+                return make_response(
+                    jsonify(
+                        {"status": 400, "message": "Bad Request - No JSON data provided"}
+                    ),
+                    400,
+                ) 
+            return make_response(
+                    jsonify(
+                        {"status": 400, "message": "Update Box Successfully"}
+                    ),
+                    400,
+                )   
+        else:
+            return make_response(
+                    jsonify(
+                        {"status": 400, "message": "User is not admin role"}
+                    ),
+                    400,
+                )
+    except Exception as e:
+        print(f"Error: {e}")
+        error = "An error occurred " + str(e)
+        return {"status": 500, "message": error} 
 def changeBoxName(BoxID):
     try:
         current_user = get_jwt_identity()

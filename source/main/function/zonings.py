@@ -38,7 +38,7 @@ def viewZoningsofDistrict():
         Zoningsquery = Zonings.query
         Districtsquery = Districts.query
         if name:
-            NameDistrict = Districtsquery.filter(Districts.DistrictName == name)
+            NameDistrict = Districtsquery.filter(Districts.DistrictName == name).all()
             for item in NameDistrict:
                 DistrictID = item.DistrictID
                 break

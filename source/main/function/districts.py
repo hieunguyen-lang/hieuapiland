@@ -28,15 +28,12 @@ def viewDistrict():
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 500, 'message': 'An error occurred while list district!'}), 500)
-def viewDistrictsofProvince():
+def viewDistrictsofProvince(ProvinceID):
     try:
-        id = request.args.get("id")
-        query = Districts.query
-        if id:
-            query = query.filter(Districts.ProvinceID == id)
-        DistrictsList = query.all()
+
+        districts = Districts.query.filter(Districts.ProvinceID == ProvinceID).all()
         ListJsonDistricts = []
-        for item in DistrictsList:
+        for item in districts:
             result = dict()
             result["DistrictID"] = item.DistrictID
             result["DistrictName"] = item.DistrictName

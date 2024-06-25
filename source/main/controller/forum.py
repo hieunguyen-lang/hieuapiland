@@ -10,8 +10,11 @@ app.add_url_rule('/api/forum/block_user/<int:UserID>', methods=['PATCH'], view_f
 #View Post
 app.add_url_rule('/api/forum/view_post/<int:PostID>', methods=['GET'], view_func=viewPost)
 
-#Get list post
-app.add_url_rule('/api/forum/group/<int:GroupID>/<int:PostFrom>/<int:PostTo>/<int:UserID>', methods=['GET'], view_func=getListPost)
+#Get list ALL POST
+app.add_url_rule('/api/forum/view_allpost', methods=['GET'], view_func=getListAllPost)
+
+#Get list post by groupID
+app.add_url_rule('/api/forum/group/<int:GroupID>', methods=['GET'], view_func=getListPost)
 
 #Update Post
 app.add_url_rule('/api/forum/update_post/<int:PostID>', methods=['PATCH'], view_func=jwt_required()(updatePost))
