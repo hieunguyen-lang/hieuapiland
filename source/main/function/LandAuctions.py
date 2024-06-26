@@ -246,10 +246,22 @@ def filterAuctionbyid(LandAuctionID):
     result["OpenPrice"] = landauction.OpenPrice
     result["AuctionAddress"] = landauction.AuctionAddress
     result["Title"] = landauction.Title
-    result["StartTime"] = landauction.StartTime.strftime('%Y-%m-%dT%H:%M:%S')
-    result["EndTime"] = landauction.EndTime.strftime('%Y-%m-%dT%H:%M:%S')
+    result["RegistrationStartTime"] = landauction.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+    result["RegistrationEndTime"] = landauction.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+    result["DepositPaymentStartTime"] = landauction.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+    result["DepositPaymentEndTime"] = landauction.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+    result["EventSchedule"] = landauction.EventSchedule.strftime('%Y-%m-%dT%H:%M:%S')
     result["Latitude"] = landauction.Latitude
     result["Longitude"] = landauction.Longitude
+    result["DepositPrice"] = landauction.DepositPrice
+    result["NamePropertyOwner"] = landauction.NamePropertyOwner
+    result["NameProperty"] = landauction.NameProperty
+    result["AddressProperty"] = landauction.AddressProperty
+    result["AuctionUrl"] = landauction.AuctionUrl
+    result["NameAuctionHouse"] = landauction.NameAuctionHouse
+    result["AddressAuctionHouse"] = landauction.AddressAuctionHouse
+    result["AddressPropertyOwner"] = landauction.AddressPropertyOwner
+    result["PhoneNumberAuctionHouse"] = landauction.PhoneNumberAuctionHouse
     result["Images"] = listimgs
     result["Videos"] = listvideos
     landauctionjson.append(result)
@@ -268,10 +280,22 @@ def listAuction():
         result["OpenPrice"] = item.OpenPrice
         result["AuctionAddress"] = item.AuctionAddress
         result["Title"] = item.Title
-        result["StartTime"] = item.StartTime.strftime('%Y-%m-%dT%H:%M:%S')
-        result["EndTime"] = item.EndTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["RegistrationStartTime"] = item.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["RegistrationEndTime"] = item.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["DepositPaymentStartTime"] = item.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["DepositPaymentEndTime"] = item.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["EventSchedule"] = item.EventSchedule.strftime('%Y-%m-%dT%H:%M:%S')
         result["Latitude"] = item.Latitude
         result["Longitude"] = item.Longitude
+        result["DepositPrice"] = item.DepositPrice
+        result["NamePropertyOwner"] = item.NamePropertyOwner
+        result["NameProperty"] = item.NameProperty
+        result["AddressProperty"] = item.AddressProperty
+        result["AuctionUrl"] = item.AuctionUrl
+        result["NameAuctionHouse"] = item.NameAuctionHouse
+        result["AddressAuctionHouse"] = item.AddressAuctionHouse
+        result["AddressPropertyOwner"] = item.AddressPropertyOwner
+        result["PhoneNumberAuctionHouse"] = item.PhoneNumberAuctionHouse
         ListJsonLandAuctions.append(result)
         
         # Return the result as a JSON response
@@ -370,9 +394,9 @@ def filterAuctionbytime():
             if StartTime < EndTime:     
                 conflicting_auctions = LandAuctions.query.filter(
                     or_(
-                        and_(LandAuctions.StartTime <= StartTime, LandAuctions.EndTime >= StartTime),
-                        and_(LandAuctions.StartTime <= EndTime, LandAuctions.EndTime >= EndTime),
-                        and_(LandAuctions.StartTime >= StartTime, LandAuctions.EndTime <= EndTime)
+                        and_(LandAuctions.RegistrationStartTime <= StartTime, LandAuctions.RegistrationEndTime >= StartTime),
+                        and_(LandAuctions.RegistrationStartTime <= EndTime, LandAuctions.RegistrationEndTime >= EndTime),
+                        and_(LandAuctions.RegistrationStartTime >= StartTime, LandAuctions.RegistrationEndTime <= EndTime)
                     )
                 ).all()
                 for item2 in conflicting_auctions:
@@ -384,10 +408,22 @@ def filterAuctionbytime():
                     result["OpenPrice"] = item2.OpenPrice
                     result["AuctionAddress"] = item2.AuctionAddress
                     result["Title"] = item2.Title
-                    result["StartTime"] = item2.StartTime.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["EndTime"] = item2.EndTime.strftime('%Y-%m-%dT%H:%M:%S')
+                    result["RegistrationStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+                    result["RegistrationEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+                    result["DepositPaymentStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+                    result["DepositPaymentEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+                    result["EventSchedule"] = item2.EventSchedule.strftime('%Y-%m-%dT%H:%M:%S')
                     result["Latitude"] = item2.Latitude
                     result["Longitude"] = item2.Longitude
+                    result["DepositPrice"] = item2.DepositPrice
+                    result["NamePropertyOwner"] = item2.NamePropertyOwner
+                    result["NameProperty"] = item2.NameProperty
+                    result["AddressProperty"] = item2.AddressProperty
+                    result["AuctionUrl"] = item2.AuctionUrl
+                    result["NameAuctionHouse"] = item2.NameAuctionHouse
+                    result["AddressAuctionHouse"] = item2.AddressAuctionHouse
+                    result["AddressPropertyOwner"] = item2.AddressPropertyOwner
+                    result["PhoneNumberAuctionHouse"] = item2.PhoneNumberAuctionHouse
                     listjosnauctions.append(result)
         return listjosnauctions
     except Exception as e:

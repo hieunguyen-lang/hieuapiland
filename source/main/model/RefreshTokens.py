@@ -6,5 +6,5 @@ class RefreshTokens(db.Model):
     __tablename__ = 'RefreshTokens'
     RefreshTokenID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     UserID = db.Column(db.Integer, db.ForeignKey('Users.UserID'), nullable=False)
-    token = db.Column(db.String(256), nullable=False)
+    token = db.Column(db.String(256), unique=True, nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
