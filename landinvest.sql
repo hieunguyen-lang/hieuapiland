@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 28, 2024 at 07:53 AM
+-- Generation Time: Jun 28, 2024 at 08:59 AM
 -- Server version: 8.0.37-0ubuntu0.24.04.1
 -- PHP Version: 8.3.6
 
@@ -496,7 +496,7 @@ INSERT INTO `Locations` (`LocationID`, `UserID`, `Latitude`, `Longitude`, `Type`
 (285, 247, 10.54000000, 20.43500000, 'registration', '2024-06-10 06:30:51', '2024-06-10 06:30:51.228632'),
 (286, 248, 10.54000000, 20.43500000, 'registration', '2024-06-10 06:37:15', '2024-06-10 06:37:14.648109'),
 (287, 249, 10.54000000, 20.43500000, 'registration', '2024-06-10 15:48:37', '2024-06-10 15:48:36.955810'),
-(288, 249, 10.00000000, 100.00000000, 'login', '2024-06-28 02:27:06', '127.0.0.1');
+(288, 249, 10.00000000, 100.00000000, 'login', '2024-06-28 08:40:03', '127.0.0.1');
 
 -- --------------------------------------------------------
 
@@ -619,8 +619,8 @@ CREATE TABLE `RefreshTokens` (
 --
 
 INSERT INTO `RefreshTokens` (`RefreshTokenID`, `UserID`, `token`, `expires_at`) VALUES
-(52, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTQ4MDQ4MSwianRpIjoiYTEzZGIwNmUtZTVjNC00ODlhLWFiNDUtNDY1NzkwYzQ1ZDdmIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTQ4MDQ4MSwiZXhwIjoxNzIyMDcyNDgxfQ.f307kiAYrwgWWsNNGlDfOVbzb1RGgtQOcaxt0_5RouY', '2024-07-27 09:28:01'),
-(53, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTU0MTYyNiwianRpIjoiYTFjNzFkMzItZWZhZC00ZThhLWIzZjctZWU2ZjNmNTdlMGU3IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTU0MTYyNiwiZXhwIjoxNzIyMTMzNjI2fQ.EF_7eHmHpAIoztX5DpxfWFxhZsiCirrZG0Kig1y4FyU', '2024-07-28 02:27:06');
+(53, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTU0MTYyNiwianRpIjoiYTFjNzFkMzItZWZhZC00ZThhLWIzZjctZWU2ZjNmNTdlMGU3IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTU0MTYyNiwiZXhwIjoxNzIyMTMzNjI2fQ.EF_7eHmHpAIoztX5DpxfWFxhZsiCirrZG0Kig1y4FyU', '2024-07-28 02:27:06'),
+(54, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTU2NDAwMywianRpIjoiOWUxYTM1NDQtOWUxYi00YzQ5LWI4YjEtNjNjOGJkYWQ2MzJlIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTU2NDAwMywiZXhwIjoxNzIyMTU2MDAzfQ.U9SAppHt7GzFQ3vbEqSbYUJ-VuhLSDrnQH0yL8wr_ZQ', '2024-07-28 08:40:03');
 
 -- --------------------------------------------------------
 
@@ -849,7 +849,7 @@ INSERT INTO `Users` (`UserID`, `FullName`, `Username`, `Password`, `Email`, `Pho
 (188, 'linh228', 'linh228', '$pbkdf2-sha256$29000$n7MWQohxbo2x1lrrPWfMuQ$/e2asFQtIFp0uQ/pzQ99kBLC.D83fSZscaP7GiPrUv4', 'linh228@gmail.com', 'qwe', 'Nam', '2024-03-12', '00:00:00', 24, NULL, '127.0.0.1', '113.178.49.22', '2024-03-12 11:47:40', 0, 0, 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS9Zde21fi2AnY9_C17tqYi8DO25lRM_yAa7Q&usqp=CAU&fbclid=IwAR16g1ONptpUiKuDIt37LRxU3FTZck1cv9HDywe9VWxWSQBwcuGNfB7JUw4', 'Were we', 'Hà Nội', 'Hà Nội', 0, 0, NULL),
 (222, 'user test', 'usertest', '$pbkdf2-sha256$29000$bi3l/L8XAsCY01pr7R2D8A$5YP7wrKulOhWlknkzPNGhIL/aFfvtXI5HONKhkbh/LU', 'testuser@gmail.com', NULL, 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-06 16:19:53', 0, 0, NULL, NULL, NULL, NULL, 0, 0, NULL),
 (223, 'hieu nguyen', 'nguyenkhachieu3', '$pbkdf2-sha256$29000$AaA0ptSas3YO4bw3ptS6dw$pd5TzC0F5hCpTqMW4wG7KU72lPLB5GkZ5dh2Y7Cdnag', 'hieuabc@gmail.com', '0345466678', 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-09 08:55:22', 1, 1, NULL, NULL, NULL, NULL, 0, 0, NULL),
-(249, 'hieunguyen', 'admin2205', '$pbkdf2-sha256$29000$iXHunbOWEqJUSimltHZujQ$dzVuhYrthr3PiCsFDrucMVWbNOH1fsHHRrNpIis8U8U', 'hieunkbb@gmail.com', NULL, 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-28 02:27:06', 1, 1, 'http://127.0.0.1:2345/api/profile/image/profileIMGid.jpg', NULL, NULL, NULL, 1, 0, NULL);
+(249, 'hieunguyen', 'admin2205', '$pbkdf2-sha256$29000$iXHunbOWEqJUSimltHZujQ$dzVuhYrthr3PiCsFDrucMVWbNOH1fsHHRrNpIis8U8U', 'hieunkbb@gmail.com', NULL, 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-28 08:40:03', 1, 1, 'http://127.0.0.1:2345/api/group/image/groupimgid=249.jpeg', NULL, NULL, NULL, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -1174,7 +1174,7 @@ ALTER TABLE `Provinces`
 -- AUTO_INCREMENT for table `RefreshTokens`
 --
 ALTER TABLE `RefreshTokens`
-  MODIFY `RefreshTokenID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `RefreshTokenID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `Relationships`

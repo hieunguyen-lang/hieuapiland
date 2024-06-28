@@ -227,11 +227,12 @@ def changeImgGroup(GroupID):
         if user_role == 1:
             json_data = request.json
             group = Groups.query.filter(Groups.GroupID == GroupID).first()
-            str1 = "http://127.0.0.1:2345/api/group/image/"
-            str2 = "groupimgid="
+            str1 = "http://127.0.0.1:2345/api/profile/image/"
+            str2 = "profileimgid="
             str3 = "/home/hieu/Downloads/hieuapiland/source/images/groupimg/"
             if group:
                 group.avatarLink = saveandresizeimage(json_data["avatarLink"],GroupID, str1, str2, str3),
+                
             db.session.commit()
             return make_response(
                 jsonify({"status": 200, "message": "Change Image Successfully"}), 200, 

@@ -1021,10 +1021,12 @@ def updateprofile():
             CurrentUserID = current_user.get("UserID")
             json_data = request.json
             user = Users.query.filter(Users.UserID == CurrentUserID).first()
-            str1 = "/home/hieu/Downloads/hieuapiland/source/images/profileimg/"
+            str1 = "http://127.0.0.1:2345/api/group/image/"
+            str2 = "groupimgid="
+            str3 = "/home/hieu/Downloads/hieuapiland/source/images/profileimg/"
             if user:
                 if json_data["avatarLink"]:
-                    user.avatarLink = saveandresizeimage(json_data["avatarLink"],CurrentUserID, str1)
+                    user.avatarLink = saveandresizeimage(json_data["avatarLink"],CurrentUserID, str1, str2, str3)
                     db.session.commit()
                     return make_response(
                                 jsonify({"Status": 200, "message": "avatarLink update successfully!"}),
