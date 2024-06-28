@@ -21,7 +21,7 @@ class Users(db.Model):
     LastActivityTime = db.Column(db.DateTime)
     IsLoggedIn = db.Column(db.Boolean, default=False)
     Role = db.Column(db.Boolean, nullable=False)
-    avatarLink = db.Column(db.LargeBinary, nullable=True)
+    avatarLink = db.Column(db.String(400), nullable=True)
     Bio = db.Column(db.String(255), nullable=True)
     CurrentAdd = db.Column(db.String(255), nullable=True)
     BirthPlace = db.Column(db.String(255), nullable=True)

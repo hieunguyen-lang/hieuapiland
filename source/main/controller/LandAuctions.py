@@ -23,5 +23,5 @@ app.add_url_rule('/api/landauctions/view_list', methods=['GET'], view_func=listA
 app.add_url_rule('/api/landauctions/filter_auction/province', methods=['GET'], view_func=filterAuctionbyprovince)
 
 #Filter Land Auction by time
-app.add_url_rule('/api/landauctions/filter_auction/time', methods=['GET'], view_func=filterAuctionbytime)
+app.add_url_rule('/api/landauctions/filter_auction/time', methods=['POST'], view_func=filterAuctionbytime)
 

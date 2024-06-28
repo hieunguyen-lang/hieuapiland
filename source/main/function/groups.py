@@ -1,6 +1,6 @@
 import base64
-from source import db
-from flask import request, make_response, jsonify
+from source import db, app
+from flask import request, make_response, jsonify, send_from_directory
 from sqlalchemy import or_, and_
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from source.main.model.groups import Groups
@@ -9,7 +9,7 @@ from source.main.function.forum import viewPost, deletePost
 from sqlalchemy import func
 from datetime import datetime
 from sqlalchemy.sql import label, text
-
+from source.main.extend import *
 
 def singleGroup(GroupID):
     try:
@@ -68,7 +68,7 @@ def changeGroupName(GroupID):
         print(group)
         if not group:
             return make_response(jsonify({"status": 400, "message": "Missing 'group' field"}), 400)
-        if user_role == 0:
+        if user_role == 1:
             json_data = request.json
             group.GroupName = json_data["GroupName"]
             db.session.commit()
@@ -147,10 +147,11 @@ def searchPostInGroup(GroupID, key):
         )
 
 
-def addGroup(UserID):
+def addGroup():
     try:
         current_user = get_jwt_identity()
         user_role = current_user.get('Role')
+        userid = current_user.get('UserID')
         if user_role == 1:
             if not request.json:
                 return make_response(
@@ -163,7 +164,6 @@ def addGroup(UserID):
             required_fields = [
                 "BoxID",
                 "GroupName",
-                "avatarLink",
             ]
             for field in required_fields:
                 if field not in json_data:
@@ -173,13 +173,11 @@ def addGroup(UserID):
                         ),
                         400,
                     )
-            
-            #image = base64.b64decode(json_data["avatarLink"])
+           
             group = Groups(
-                UserID = UserID,
+                UserID = userid,
                 BoxID = json_data["BoxID"],
                 GroupName = json_data["GroupName"],
-                avatarLink = json_data["avatarLink"],
                 CreateAt = datetime.now()
             )
             db.session.add(group)
@@ -224,16 +222,24 @@ def removeGroup(GroupID):
 
 def changeImgGroup(GroupID):
     try:
-
-        image = base64.b64decode(request.json["avatarLink"])
-       
-        group = Groups.query.filter(Groups.GroupID == GroupID).first()
-        if group:
-            group.avatarLink = image
-        db.session.commit()
-        return make_response(
-            jsonify({"status": 200, "message": "Change Image Successfully"}), 200, 
-        )
+        current_user = get_jwt_identity()
+        user_role = current_user.get('Role')
+        if user_role == 1:
+            json_data = request.json
+            group = Groups.query.filter(Groups.GroupID == GroupID).first()
+            str1 = "http://127.0.0.1:2345/api/group/image/"
+            str2 = "groupimgid="
+            str3 = "/home/hieu/Downloads/hieuapiland/source/images/groupimg/"
+            if group:
+                group.avatarLink = saveandresizeimage(json_data["avatarLink"],GroupID, str1, str2, str3),
+            db.session.commit()
+            return make_response(
+                jsonify({"status": 200, "message": "Change Image Successfully"}), 200, 
+            )
+        else:
+            return make_response(
+                jsonify({"status": 405, "message": "You are not admin"}), 405, 
+            )
     
     except Exception as e:
         db.session.rollback()
@@ -241,3 +247,6 @@ def changeImgGroup(GroupID):
         return make_response(
             jsonify({"status": 500, "message": "An error occurred"}), 500, 
         )
+        
+def get_groupimg(path):
+    return send_from_directory(app.config['Image_FOLDERS'][1], path)

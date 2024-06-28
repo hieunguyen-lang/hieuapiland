@@ -1,7 +1,7 @@
 import base64
 from source import db
 from flask import request, make_response, jsonify
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_,union, select, intersect
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from source.main.model.LandAuctions import LandAuctions
 from source.main.model.LandAuctionCategories import LandAuctionCategories
@@ -230,14 +230,16 @@ def filterAuctionbyid(LandAuctionID):
         result["AuctionImgID"] = item.AuctionImgID
         result["LandAuctionID"] = item.LandAuctionID
         result["Descritption"] = item.Descritption
-        listvideos.append(result)
+        result["Image"] = item.Image
+        listimgs.append(result)
         
-    for item in landauctionimg:
+    for item in landauctionvid:
         result = dict()
         result["AuctionImgID"] = item.AuctionImgID
         result["LandAuctionID"] = item.LandAuctionID
         result["Descritption"] = item.Descritption
-        listimgs.append(result)
+        result["Video"] = item.Video
+        listvideos.append(result)
     result = dict()
     result["LandAuctionID"] = landauction.LandAuctionID
     result["DistrictID"] = landauction.DistrictID
@@ -270,8 +272,27 @@ def filterAuctionbyid(LandAuctionID):
 
 def listAuction():
     listlandauction = LandAuctions.query.all()
-    ListJsonLandAuctions= []
+    listimgs = []
+    ListJsonLandAuctions = []
     for item in listlandauction:
+        listimgs =[]
+        landauctionimg = AuctionImgs.query.filter(AuctionImgs.LandAuctionID == item.LandAuctionID).all()
+        lenarray = len(landauctionimg)
+        if lenarray == 0:
+            
+            listimgs = [
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"},
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"},
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"}
+        ]
+        else:
+            for item in landauctionimg:
+                result1 = dict()
+                result1["AuctionImgID"] = item.AuctionImgID
+                result1["LandAuctionID"] = item.LandAuctionID
+                result1["Descritption"] = item.Descritption
+                result1["Image"] = item.Image
+                listimgs.append(result)
         result = dict()
         result["LandAuctionID"] = item.LandAuctionID
         result["DistrictID"] = item.DistrictID
@@ -288,14 +309,8 @@ def listAuction():
         result["Latitude"] = item.Latitude
         result["Longitude"] = item.Longitude
         result["DepositPrice"] = item.DepositPrice
-        result["NamePropertyOwner"] = item.NamePropertyOwner
-        result["NameProperty"] = item.NameProperty
-        result["AddressProperty"] = item.AddressProperty
         result["AuctionUrl"] = item.AuctionUrl
-        result["NameAuctionHouse"] = item.NameAuctionHouse
-        result["AddressAuctionHouse"] = item.AddressAuctionHouse
-        result["AddressPropertyOwner"] = item.AddressPropertyOwner
-        result["PhoneNumberAuctionHouse"] = item.PhoneNumberAuctionHouse
+        result["Images"] = listimgs
         ListJsonLandAuctions.append(result)
         
         # Return the result as a JSON response
@@ -351,8 +366,44 @@ def filterAuctionbyprovince():
                             'message': 'An error occurred while adding provinces!'
                          }
                     ),500)
+        
+def result(conflicting_auctions):
+    print("check loix")
+    listjosnauctions =[]
+    for item2 in conflicting_auctions:
+        listimgs =[]
+        landauctionimg = AuctionImgs.query.filter(AuctionImgs.LandAuctionID == item2.LandAuctionID).all()
+        lenarray = len(landauctionimg)
+        if lenarray == 0:
+            
+            listimgs = [
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"},
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"},
+            {"Image": "http://127.0.0.1:2345/api/group/image/groupimgid.jpeg"}
+        ]
+        result = dict()
+        result["LandAuctionID"] = item2.LandAuctionID
+        result["DistrictID"] = item2.DistrictID
+        result["LandAuctionCategoryID"] = item2.LandAuctionCategoryID
+        result["Description"] = item2.Description
+        result["OpenPrice"] = item2.OpenPrice
+        result["AuctionAddress"] = item2.AuctionAddress
+        result["Title"] = item2.Title
+        result["RegistrationStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["RegistrationEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["DepositPaymentStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["DepositPaymentEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
+        result["EventSchedule"] = item2.EventSchedule.strftime('%Y-%m-%dT%H:%M:%S')
+        result["Latitude"] = item2.Latitude
+        result["Longitude"] = item2.Longitude
+        result["DepositPrice"] = item2.DepositPrice
+        result["AuctionUrl"] = item2.AuctionUrl
+        result["Images"] = listimgs
+        listjosnauctions.append(result)
+    return listjosnauctions
 def filterAuctionbytime():
     try:
+        listjosnauctions = []
         if not request.json:
             return make_response(
                 jsonify(
@@ -362,70 +413,123 @@ def filterAuctionbytime():
                 )
         if request.json:    
             json_data = request.json
-            required_fields = [
-                "StartTime",
-                "EndTime", 
-            ]
-            for field in required_fields:
-                if field not in json_data:
-                    return make_response(
-                        jsonify(
-                            {"status": 400, "message": f"Missing required field: {field}"}
-                        ),
-                        400,
-                    )
-        if json_data["StartTime"]:
-            try:
-                StartTime = datetime.strptime(json_data["StartTime"], "%Y-%m-%dT%H:%M:%S")
-                print(StartTime)
-            except ValueError as e:
-                print(f"Error parsing StartTime: {e}")
-                # Xử lý lỗi khi chuỗi không phù hợp với định dạng
-                StartTime = None
-        if json_data["EndTime"]:
-            try:
-                EndTime = datetime.strptime(json_data["EndTime"], "%Y-%m-%dT%H:%M:%S")
-                print(EndTime)
-            except ValueError as e:
-                print(f"Error parsing EndTime: {e}")
-                EndTime =None 
-        listjosnauctions =[]
-        if StartTime and EndTime:
-            if StartTime < EndTime:     
-                conflicting_auctions = LandAuctions.query.filter(
-                    or_(
-                        and_(LandAuctions.RegistrationStartTime <= StartTime, LandAuctions.RegistrationEndTime >= StartTime),
-                        and_(LandAuctions.RegistrationStartTime <= EndTime, LandAuctions.RegistrationEndTime >= EndTime),
-                        and_(LandAuctions.RegistrationStartTime >= StartTime, LandAuctions.RegistrationEndTime <= EndTime)
-                    )
-                ).all()
-                for item2 in conflicting_auctions:
-                    result = dict()
-                    result["LandAuctionID"] = item2.LandAuctionID
-                    result["DistrictID"] = item2.DistrictID
-                    result["LandAuctionCategoryID"] = item2.LandAuctionCategoryID
-                    result["Description"] = item2.Description
-                    result["OpenPrice"] = item2.OpenPrice
-                    result["AuctionAddress"] = item2.AuctionAddress
-                    result["Title"] = item2.Title
-                    result["RegistrationStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["RegistrationEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["DepositPaymentStartTime"] = item2.RegistrationStartTime.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["DepositPaymentEndTime"] = item2.RegistrationEndTime.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["EventSchedule"] = item2.EventSchedule.strftime('%Y-%m-%dT%H:%M:%S')
-                    result["Latitude"] = item2.Latitude
-                    result["Longitude"] = item2.Longitude
-                    result["DepositPrice"] = item2.DepositPrice
-                    result["NamePropertyOwner"] = item2.NamePropertyOwner
-                    result["NameProperty"] = item2.NameProperty
-                    result["AddressProperty"] = item2.AddressProperty
-                    result["AuctionUrl"] = item2.AuctionUrl
-                    result["NameAuctionHouse"] = item2.NameAuctionHouse
-                    result["AddressAuctionHouse"] = item2.AddressAuctionHouse
-                    result["AddressPropertyOwner"] = item2.AddressPropertyOwner
-                    result["PhoneNumberAuctionHouse"] = item2.PhoneNumberAuctionHouse
-                    listjosnauctions.append(result)
-        return listjosnauctions
+            if json_data["StartTime"]:
+                try:
+                    StartTime = datetime.strptime(json_data["StartTime"], "%Y-%m-%dT%H:%M:%S")
+                    print(StartTime)
+                except ValueError as e:
+                    print(f"Error parsing StartTime: {e}")
+                    # Xử lý lỗi khi chuỗi không phù hợp với định dạng
+                    StartTime = None
+            if json_data["EndTime"]:
+                try:
+                    EndTime = datetime.strptime(json_data["EndTime"], "%Y-%m-%dT%H:%M:%S")
+                    print(EndTime)
+                except ValueError as e:
+                    print(f"Error parsing EndTime: {e}")
+                    EndTime =None 
+            
+
+            if StartTime and EndTime and json_data["Province"] and json_data["District"] and json_data["StartPrice"] and["EndPrice"]:
+                if StartTime < EndTime:      
+                    conflicting_auctions = LandAuctions.query.filter(
+                        and_(
+                            or_(
+                                and_(LandAuctions.RegistrationStartTime <= StartTime, LandAuctions.RegistrationEndTime >= StartTime),
+                                and_(LandAuctions.RegistrationStartTime <= EndTime, LandAuctions.RegistrationEndTime >= EndTime),
+                                and_(LandAuctions.RegistrationStartTime >= StartTime, LandAuctions.RegistrationEndTime <= EndTime)
+                            ),
+                        func.lower(LandAuctions.AuctionAddress).like(func.lower(f'%{json_data["Province"]}%')),
+                        func.lower(LandAuctions.AuctionAddress).like(func.lower(f'%{json_data["District"]}%')),
+                        LandAuctions.OpenPrice >= float(json_data["StartPrice"]),
+                        LandAuctions.OpenPrice <= float(json_data["EndPrice"]) 
+                        )
+                    ).all()
+                    
+                    listjosnauctions = result(conflicting_auctions)
+                    
+            query1_conditions = None
+            if  StartTime  and EndTime:
+                
+                query1_conditions = or_(
+                                and_(LandAuctions.RegistrationStartTime <= StartTime, LandAuctions.RegistrationEndTime >= StartTime),
+                                and_(LandAuctions.RegistrationStartTime <= EndTime, LandAuctions.RegistrationEndTime >= EndTime),
+                                and_(LandAuctions.RegistrationStartTime >= StartTime, LandAuctions.RegistrationEndTime <= EndTime)
+                            )
+                boolenvalue1 = 0
+            elif  StartTime is None and EndTime is None:
+                boolenvalue1 = 1
+                
+            query2_conditions = None
+            if  json_data["Province"]:
+                query2_conditions = func.lower(LandAuctions.AuctionAddress).like(func.lower(f'%{json_data["Province"]}%'))
+                boolenvalue2 = 0
+            elif json_data["Province"] is None:
+                boolenvalue2 = 1
+                
+            query3_conditions = None
+            if  json_data["District"] is None:
+                boolenvalue3 = 1
+                
+            elif json_data["District"]:
+                query3_conditions = and_(
+                    func.lower(LandAuctions.AuctionAddress).like(func.lower(f'%{json_data["Province"]}%')),
+                    func.lower(LandAuctions.AuctionAddress).like(func.lower(f'%{json_data["District"]}%'))
+                )
+                boolenvalue3 = 0
+                
+            query4_conditions = None     
+            if  json_data["StartPrice"] is None and  json_data["EndPrice"] is None:
+                boolenvalue4 = 1
+            elif json_data["StartPrice"]  and  json_data["EndPrice"]:
+                query4_conditions = and_(
+                        LandAuctions.OpenPrice >= float(json_data["StartPrice"]),
+                        LandAuctions.OpenPrice <= float(json_data["EndPrice"]) 
+                        )
+                boolenvalue4 = 0
+            # Xây dựng các câu truy vấn từ các điều kiện và sử dụng subquery()
+            print(query1_conditions)
+            print(query2_conditions)
+            print(query3_conditions)
+            print(query4_conditions)
+            
+            # Xây dựng các câu truy vấn từ các điều kiện
+            
+            if boolenvalue1 == 0: 
+                query1 = select(LandAuctions).where(query1_conditions) 
+            else: 
+
+                query1 = select(LandAuctions)
+             
+            if boolenvalue2 == 0:
+                query2 = select(LandAuctions).where(query2_conditions)
+            else:
+
+                query2 = select(LandAuctions)
+             
+            if boolenvalue3 == 0:
+                query3 = select(LandAuctions).where(query3_conditions)
+            else:
+
+                query3 = select(LandAuctions)
+            
+            if boolenvalue4 == 0:
+                query4 = select(LandAuctions).where(query4_conditions)
+                
+            else:
+
+                query4 = select(LandAuctions)
+
+            # Kết hợp các câu truy vấn lại với nhau bằng union_all
+            intersect_query = intersect( query1,query2, query3, query4 )
+            # Thực thi câu truy vấn và lấy kết quả
+            listresult = db.session.execute(intersect_query).fetchall()
+
+            # Xử lý kết quả nếu cần thiết
+            listjosnauctions = result(listresult)
+
+            # In kết quả hoặc làm gì đó khác với kết quả đã lấy được
+            return(listjosnauctions)
     except Exception as e:
         print(e)
         err =str(e)

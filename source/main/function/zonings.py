@@ -65,4 +65,4 @@ def viewZoningsofDistrict():
         return make_response(jsonify({'status': 500, 'message': 'An error occurred while list Zoning Img!'}), 500)
 
 def get_image(path):
-    return send_from_directory(app.config['Image_FOLDER'], path)
+    return send_from_directory(app.config['Image_FOLDER'][0], path)

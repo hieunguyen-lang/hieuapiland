@@ -19,7 +19,12 @@ app = Flask(__name__)
 CORS(app)
 # sslify = SSLify(app)
 app.config["SECRET_KEY"] = "devsenior"
-app.config["Image_FOLDER"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
+#app.config["Image_FOLDER"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'images')
+app.config['Image_FOLDERS'] = [
+    '/home/hieu/Downloads/hieuapiland/source/images/profileimg',
+    '/home/hieu/Downloads/hieuapiland/source/images/groupimg',
+    # Thêm các thư mục khác nếu cần
+]
 app.config["SECURITY_PASSWORD_SALT"] = "devsenior"
 app.config["JWT_TOKEN_LOCATION"] = ['headers', "cookies"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=15)

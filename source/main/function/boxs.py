@@ -8,8 +8,8 @@ from source.main.function.forum import viewPost, deletePost
 from sqlalchemy import func
 from datetime import datetime
 from sqlalchemy.sql import label, text
-
-
+from source.main.extend import *
+from source.main.function import *
 def addNewBox():
     try:
         current_user = get_jwt_identity()
@@ -140,6 +140,9 @@ def updateBox(BoxID):
     try:
         current_user = get_jwt_identity()
         user_role = current_user.get('Role')
+        str1 = "http://127.0.0.1:2345/api/group/image/"
+        str2 = "boximgid="
+        str3 = "/home/hieu/Downloads/hieuapiland/source/images/groupimg/"
         if user_role == 1:
             json_data = request.json
             if json_data:
@@ -148,7 +151,7 @@ def updateBox(BoxID):
                     box.BoxName = json_data["BoxName"]
                     box.Description = json_data["Description"]
                     if json_data["avatarLink"]:
-                        box.avatarLink = json_data["avatarLink"]
+                        box.avatarLink = saveandresizeimage(json_data["avatarLink"],BoxID, str1, str2, str3),
                     else:
                         box.avatarLink = None
                     db.session.commit()

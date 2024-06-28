@@ -36,24 +36,16 @@ app.add_url_rule('/api/forgotPassword', methods=['POST'], view_func=forgotPasswo
 # User change password
 app.add_url_rule('/api/profile/change_password', methods=['PATCH'], view_func=jwt_required()(changePassword))
 
-# Phone Number
-app.add_url_rule('/api/profile/phone/', methods=['PATCH'], view_func=jwt_required()(changePhone))
-
-# Gender
-app.add_url_rule('/api/profile/gender/<int:id>', methods=['PATCH'], view_func=jwt_required()(changeGender))
-
-# BirthDate
-app.add_url_rule('/api/profile/birthdate/<id>', methods=['PATCH'], view_func=jwt_required()(changeBirthDate))
-
-# BirthTime
-app.add_url_rule('/api/profile/birthtime/<id>', methods=['PATCH'], view_func=jwt_required()(changeBirthTime))
+# update profile
+app.add_url_rule('/api/profile/updateprofile', methods=['PATCH'], view_func=jwt_required()(updateprofile))
 
 # Status Anonymous
 app.add_url_rule('/api/profile/anonymous/<id>', methods=['PATCH'], view_func=changeAnonymous)
 
 app.add_url_rule('/api/check_status/<id>', methods=['GET'], view_func=checkStatus)
 
-#Change Profile
-app.add_url_rule('/api/profile/change_profile/<id>', methods=['PUT'], view_func=updateUser)
 #Upload Zoning Image
 app.add_url_rule('/api/upload/<int:id>', methods=['POST'], view_func=UploadZoningImg)
+
+#view profile img  
+app.add_url_rule('/api/profile/image/<path>', methods=['GET'], view_func=get_profileimg)

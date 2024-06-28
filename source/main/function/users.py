@@ -367,12 +367,6 @@ def viewProfile(UserID):
                     "Password": user.Password,
                     "Gender": user.Gender,
                     "avatarLink": byteToString(user.avatarLink),
-                    "BirthDate": (
-                        user.BirthDate.strftime("%Y-%m-%d") if user.BirthDate else None
-                    ),
-                    "BirthTime": (
-                        user.BirthTime.strftime("%H:%M:%S") if user.BirthTime else None
-                    ),
                     "RegistrationIP": user.RegistrationIP,
                     "LastLoginIP": user.LastLoginIP,
                     "LastActivityTime": user.LastActivityTime,
@@ -633,8 +627,7 @@ def loginUser():
             )
         ).first()
         if user.IsLoggedIn == False and user.Confirmed == True:
-            print(json_data.get("Password"))
-            print(user.Password)
+
             if pbkdf2_sha256.verify(json_data.get("Password"), user.Password):
                 print(request.remote_addr)
                 print(json_data.get("LastLoginIP"))
@@ -686,7 +679,7 @@ def loginUser():
                     db.session.add(location_login)
 
                 db.session.commit()
-                response = jsonify({"msg": "login successful","refreshtoken": refresh_token, "access_token": access_token})
+                response = jsonify({"msg": "login successful","refreshtoken": refresh_token, "access_token": access_token, "role": user.Role})
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
                 return response
@@ -1020,37 +1013,25 @@ def changeGender(id):
         }, 200
 
 
-# Change Phone Number
-def changePhone():
+# Change updateprofile
+def updateprofile():
     try:
         if request.method == "PATCH":
             current_user = get_jwt_identity()
             CurrentUserID = current_user.get("UserID")
             json_data = request.json
-            phone = json_data.get("Phone")
             user = Users.query.filter(Users.UserID == CurrentUserID).first()
+            str1 = "/home/hieu/Downloads/hieuapiland/source/images/profileimg/"
             if user:
-                if phone:
-                    user.Phone = phone
+                if json_data["avatarLink"]:
+                    user.avatarLink = saveandresizeimage(json_data["avatarLink"],CurrentUserID, str1)
                     db.session.commit()
-                    return {
-                        "UserID": user.UserID,
-                        "Username": user.Username,
-                        "FullName": user.FullName,
-                        "Email": user.Email,
-                        "Phone": phone,
-                        "Password": user.Password,
-                        "Gender": user.Gender,
-                        # "BirthDate": user.BirthDate.strftime("%Y-%m-%d"),
-                        # "BirthTime": user.BirthTime.strftime("%H:%M:%S"),
-                        "RegistrationIP": user.RegistrationIP,
-                        "LastLoginIP": user.LastLoginIP,
-                        "LastActivityTime": user.LastActivityTime,
-                        "IsLoggedIn": user.IsLoggedIn,
-                        "Message": "Change Sucessfully!",
-                    }
+                    return make_response(
+                                jsonify({"Status": 200, "message": "avatarLink update successfully!"}),
+                                200,
+                            )      
                 else:
-                    return "Invalid or missing Phone field in JSON data", 400
+                    return "Invalid or missing avatarLink field in JSON data", 400
             else:
                 return "User not found", 404
     except Exception as e:
@@ -1338,3 +1319,5 @@ def UploadZoningImg(id):
             ),
             500,
         )
+def get_profileimg(path):
+    return send_from_directory(app.config['Image_FOLDERS'][0], path)
