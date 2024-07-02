@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 28, 2024 at 08:59 AM
+-- Generation Time: Jul 02, 2024 at 09:11 AM
 -- Server version: 8.0.37-0ubuntu0.24.04.1
 -- PHP Version: 8.3.6
 
@@ -146,7 +146,7 @@ CREATE TABLE `CommentFavorite` (
 CREATE TABLE `CommentPhotos` (
   `PhotoID` int NOT NULL,
   `CommentID` int DEFAULT NULL,
-  `PhotoURL` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `PhotoURL` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `UploadTime` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -156,7 +156,10 @@ CREATE TABLE `CommentPhotos` (
 
 INSERT INTO `CommentPhotos` (`PhotoID`, `CommentID`, `PhotoURL`, `UploadTime`) VALUES
 (1, 1, 'https://picsum.photos/200/300', '2024-03-01 16:28:11'),
-(2, 2, 'https://i.ibb.co/WVLJRb0/timestudio-vn-headshot-eye-glasses-02.jpg', '2024-03-01 17:00:57');
+(2, 2, 'https://i.ibb.co/WVLJRb0/timestudio-vn-headshot-eye-glasses-02.jpg', '2024-03-01 17:00:57'),
+(7, 37, 'http://127.0.0.1:2345/api/post/image/commentimgid=37.jpeg', '2024-07-01 09:36:23'),
+(8, 38, 'http://127.0.0.1:2345/api/post/image/commentimgid=e39d9221-0eba-41a6-8396-735a639062df.jpeg', '2024-07-01 09:42:32'),
+(9, 41, 'http://127.0.0.1:2345/api/post/image/commentimgid=81eea897-3e6c-4b50-9c5a-13b73475fe80.jpeg', '2024-07-01 10:15:58');
 
 -- --------------------------------------------------------
 
@@ -239,9 +242,17 @@ CREATE TABLE `Favorite` (
 CREATE TABLE `ForumPhotos` (
   `PhotoID` int NOT NULL,
   `PostID` int DEFAULT NULL,
-  `PhotoURL` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `PhotoURL` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `UploadTime` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ForumPhotos`
+--
+
+INSERT INTO `ForumPhotos` (`PhotoID`, `PostID`, `PhotoURL`, `UploadTime`) VALUES
+(62, 70, 'http://127.0.0.1:2345/api/post/image/commentimgid=31cf5f9b-85b7-426c-a374-6d92fe0c7904.jpeg', '2024-07-01 14:30:23'),
+(63, 71, 'http://127.0.0.1:2345/api/post/image/Postid=8dbea76b-8ddb-42f8-8de9-aff5e8c9a986.jpeg', '2024-07-02 06:48:44');
 
 -- --------------------------------------------------------
 
@@ -274,7 +285,23 @@ INSERT INTO `ForumPosts` (`PostID`, `UserID`, `GroupID`, `Title`, `Content`, `Po
 (49, 1, 4, 'Title for Post 4', 'This is the real content for post 4. It presents findings and conclusions.', '2023-06-21 11:00:00', '192.168.1.4', 51.50735100, -0.12775800, '2023-06-21 11:00:00'),
 (50, 1, 5, 'Title for Post 5', 'This is the real content for post 5. It explores different perspectives on the topic.', '2023-06-21 12:00:00', '192.168.1.5', 48.85661300, 2.35222200, '2023-06-21 12:00:00'),
 (51, 1, 6, 'Title for Post 6', 'This is the real content for post 6. It presents case studies and examples.', '2023-06-21 13:00:00', '192.168.1.6', 35.68948700, 139.69171100, '2023-06-21 13:00:00'),
-(52, 7, 7, 'Title for Post 7', 'This is the real content for post 7. It discusses implications and recommendations.', '2023-06-21 14:00:00', '192.168.1.7', 55.75582500, 37.61729800, '2023-06-21 14:00:00');
+(52, 7, 7, 'Title for Post 7', 'This is the real content for post 7. It discusses implications and recommendations.', '2023-06-21 14:00:00', '192.168.1.7', 55.75582500, 37.61729800, '2023-06-21 14:00:00'),
+(56, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:03:09', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:03:08'),
+(57, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:10:27', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:10:27'),
+(58, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:10:34', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:10:33'),
+(59, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:12:01', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:12:00'),
+(60, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:13:59', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:13:59'),
+(61, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:15:13', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:15:13'),
+(62, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:17:09', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:17:09'),
+(63, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:21:23', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:21:22'),
+(64, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:21:24', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:21:23'),
+(65, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:24:20', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:24:19'),
+(66, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:26:05', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:26:05'),
+(67, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:29:45', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:29:44'),
+(68, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:29:58', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:29:58'),
+(69, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:30:05', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:30:04'),
+(70, 249, 2, 'OtoFun', 'oto di rat hay', '2024-07-01 14:30:23', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-01 14:30:23'),
+(71, 249, 2, 'fsdfsdfdg', 'oto di rat hay', '2024-07-02 06:48:43', '127.0.0.1', 10.00000000, 100.00000000, '2024-07-02 06:48:43');
 
 -- --------------------------------------------------------
 
@@ -320,7 +347,7 @@ CREATE TABLE `Groups` (
 --
 
 INSERT INTO `Groups` (`GroupID`, `BoxID`, `UserID`, `GroupName`, `CreateAt`, `avatarLink`) VALUES
-(2, 2, 1, 'Tim nguoi yeu ha noi', '2024-02-28 16:00:11', 'http://127.0.0.1:2345/api/group/image/groupimgid=2.jpeg'),
+(2, 3, 1, 'di ee7otr to', '2024-02-28 16:00:11', 'http://127.0.0.1:2345/api/profile/image/groupimgid=2.jpeg'),
 (4, 2, 8, 'anhr4 yeu', '2024-02-29 14:33:01', 'https://i.ibb.co/SVt2FxF/family.png'),
 (5, 2, 8, 'hi', '2024-02-29 14:38:19', 'https://i.ibb.co/k5w31fF/image4.jpg'),
 (6, 2, 8, 'anh yeu', '2024-02-29 14:39:39', 'https://i.ibb.co/wYFLmXc/anh.jpg'),
@@ -496,7 +523,7 @@ INSERT INTO `Locations` (`LocationID`, `UserID`, `Latitude`, `Longitude`, `Type`
 (285, 247, 10.54000000, 20.43500000, 'registration', '2024-06-10 06:30:51', '2024-06-10 06:30:51.228632'),
 (286, 248, 10.54000000, 20.43500000, 'registration', '2024-06-10 06:37:15', '2024-06-10 06:37:14.648109'),
 (287, 249, 10.54000000, 20.43500000, 'registration', '2024-06-10 15:48:37', '2024-06-10 15:48:36.955810'),
-(288, 249, 10.00000000, 100.00000000, 'login', '2024-06-28 08:40:03', '127.0.0.1');
+(288, 249, 10.00000000, 100.00000000, 'login', '2024-07-02 07:56:10', '127.0.0.1');
 
 -- --------------------------------------------------------
 
@@ -519,7 +546,33 @@ CREATE TABLE `PostComments` (
 
 INSERT INTO `PostComments` (`CommentID`, `PostID`, `UserID`, `Content`, `CommentTime`, `CommentUpdateTime`) VALUES
 (1, 1, 1, 'abc', '2024-03-01 16:28:11', '2024-03-01 16:28:11'),
-(2, 1, 8, 'comment 1', '2024-03-01 17:00:57', '2024-03-01 17:00:57');
+(2, 1, 8, 'comment 1', '2024-03-01 17:00:57', '2024-03-01 17:00:57'),
+(12, 5, 249, 'di ee7otr to', '2024-07-01 08:21:40', '2024-07-01 08:21:40'),
+(14, 5, 249, 'di ee7otr to', '2024-07-01 08:24:31', '2024-07-01 08:24:31'),
+(17, 5, 249, 'di ee7otr to', '2024-07-01 08:27:17', '2024-07-01 08:27:17'),
+(18, 5, 249, 'di ee7otr to', '2024-07-01 08:30:56', '2024-07-01 08:30:56'),
+(19, 5, 249, 'di ee7otr to', '2024-07-01 08:31:42', '2024-07-01 08:31:42'),
+(20, 5, 249, 'di ee7otr to', '2024-07-01 08:34:50', '2024-07-01 08:34:50'),
+(21, 5, 249, 'di ee7otr to', '2024-07-01 08:35:17', '2024-07-01 08:35:17'),
+(22, 5, 249, 'di ee7otr to', '2024-07-01 08:35:34', '2024-07-01 08:35:34'),
+(23, 5, 249, 'di ee7otr to', '2024-07-01 08:35:59', '2024-07-01 08:35:59'),
+(24, 5, 249, 'di ee7otr to', '2024-07-01 08:37:30', '2024-07-01 08:37:30'),
+(26, 5, 249, 'di ee7otr to', '2024-07-01 09:06:06', '2024-07-01 09:06:06'),
+(27, 5, 249, 'di ee7otr to', '2024-07-01 09:06:53', '2024-07-01 09:06:53'),
+(28, 5, 249, 'di ee7otr to', '2024-07-01 09:19:39', '2024-07-01 09:19:39'),
+(29, 5, 249, 'di ee7otr to', '2024-07-01 09:20:19', '2024-07-01 09:20:19'),
+(30, 5, 249, 'di ee7otr to', '2024-07-01 09:20:39', '2024-07-01 09:20:39'),
+(31, 5, 249, 'di ee7otr to', '2024-07-01 09:21:24', '2024-07-01 09:21:24'),
+(32, 5, 249, 'di ee7otr to', '2024-07-01 09:22:44', '2024-07-01 09:22:44'),
+(33, 5, 249, 'di ee7otr to', '2024-07-01 09:22:59', '2024-07-01 09:22:59'),
+(34, 5, 249, 'di ee7otr to', '2024-07-01 09:29:24', '2024-07-01 09:29:24'),
+(35, 5, 249, 'di ee7otr to', '2024-07-01 09:29:49', '2024-07-01 09:29:49'),
+(36, 5, 249, 'di ee7otr to', '2024-07-01 09:34:04', '2024-07-01 09:34:04'),
+(37, 5, 249, 'di ee7otr to', '2024-07-01 09:36:22', '2024-07-01 09:36:22'),
+(38, 5, 249, 'abce', '2024-07-01 09:42:32', '2024-07-01 09:42:32'),
+(39, 5, 249, 'di ee7otr to', '2024-07-01 09:44:39', '2024-07-01 09:44:39'),
+(40, 5, 249, 'di ee7otr to', '2024-07-01 10:15:15', '2024-07-01 10:15:15'),
+(41, 5, 249, 'di ee7otr to', '2024-07-01 10:15:58', '2024-07-01 10:15:58');
 
 -- --------------------------------------------------------
 
@@ -619,8 +672,9 @@ CREATE TABLE `RefreshTokens` (
 --
 
 INSERT INTO `RefreshTokens` (`RefreshTokenID`, `UserID`, `token`, `expires_at`) VALUES
-(53, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTU0MTYyNiwianRpIjoiYTFjNzFkMzItZWZhZC00ZThhLWIzZjctZWU2ZjNmNTdlMGU3IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTU0MTYyNiwiZXhwIjoxNzIyMTMzNjI2fQ.EF_7eHmHpAIoztX5DpxfWFxhZsiCirrZG0Kig1y4FyU', '2024-07-28 02:27:06'),
-(54, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTU2NDAwMywianRpIjoiOWUxYTM1NDQtOWUxYi00YzQ5LWI4YjEtNjNjOGJkYWQ2MzJlIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTU2NDAwMywiZXhwIjoxNzIyMTU2MDAzfQ.U9SAppHt7GzFQ3vbEqSbYUJ-VuhLSDrnQH0yL8wr_ZQ', '2024-07-28 08:40:03');
+(56, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTkwMTkzMCwianRpIjoiMzEwODE5ZGItMmE5NS00ZmVlLWFlYWEtNzgxMGY0YmE0ZjQ0IiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTkwMTkzMCwiZXhwIjoxNzIyNDkzOTMwfQ.x0vjBEsaAAowhgeLKszFFicO5xPbjE0iP7q4lM-k5KY', '2024-08-01 06:32:10'),
+(57, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTkwNjQ5OSwianRpIjoiZjcwYTY2NGQtYTdjNy00ODA1LTg0NGMtODViYTQ3YmFhYmIxIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTkwNjQ5OSwiZXhwIjoxNzIyNDk4NDk5fQ.98PVuqtEIMTHT7-T_g9w5IDZMiSJcOZUzGG-K3J4vhU', '2024-08-01 07:48:19'),
+(58, 249, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTkwNjk3MCwianRpIjoiYzQ0OTEwZWQtODEzYy00NjhjLWI3NTMtYWIzMjM4OTEwZWIxIiwidHlwZSI6InJlZnJlc2giLCJzdWIiOnsiVXNlcklEIjoyNDksIkVtYWlsIjoiaGlldW5rYmJAZ21haWwuY29tIiwiUm9sZSI6dHJ1ZX0sIm5iZiI6MTcxOTkwNjk3MCwiZXhwIjoxNzIyNDk4OTcwfQ.br9wngmAr3qCgQp_lTl54bbxGlP5y6jnu_DjCOVpSLw', '2024-08-01 07:56:10');
 
 -- --------------------------------------------------------
 
@@ -849,7 +903,7 @@ INSERT INTO `Users` (`UserID`, `FullName`, `Username`, `Password`, `Email`, `Pho
 (188, 'linh228', 'linh228', '$pbkdf2-sha256$29000$n7MWQohxbo2x1lrrPWfMuQ$/e2asFQtIFp0uQ/pzQ99kBLC.D83fSZscaP7GiPrUv4', 'linh228@gmail.com', 'qwe', 'Nam', '2024-03-12', '00:00:00', 24, NULL, '127.0.0.1', '113.178.49.22', '2024-03-12 11:47:40', 0, 0, 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcS9Zde21fi2AnY9_C17tqYi8DO25lRM_yAa7Q&usqp=CAU&fbclid=IwAR16g1ONptpUiKuDIt37LRxU3FTZck1cv9HDywe9VWxWSQBwcuGNfB7JUw4', 'Were we', 'Hà Nội', 'Hà Nội', 0, 0, NULL),
 (222, 'user test', 'usertest', '$pbkdf2-sha256$29000$bi3l/L8XAsCY01pr7R2D8A$5YP7wrKulOhWlknkzPNGhIL/aFfvtXI5HONKhkbh/LU', 'testuser@gmail.com', NULL, 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-06 16:19:53', 0, 0, NULL, NULL, NULL, NULL, 0, 0, NULL),
 (223, 'hieu nguyen', 'nguyenkhachieu3', '$pbkdf2-sha256$29000$AaA0ptSas3YO4bw3ptS6dw$pd5TzC0F5hCpTqMW4wG7KU72lPLB5GkZ5dh2Y7Cdnag', 'hieuabc@gmail.com', '0345466678', 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-09 08:55:22', 1, 1, NULL, NULL, NULL, NULL, 0, 0, NULL),
-(249, 'hieunguyen', 'admin2205', '$pbkdf2-sha256$29000$iXHunbOWEqJUSimltHZujQ$dzVuhYrthr3PiCsFDrucMVWbNOH1fsHHRrNpIis8U8U', 'hieunkbb@gmail.com', NULL, 'Nam', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-06-28 08:40:03', 1, 1, 'http://127.0.0.1:2345/api/group/image/groupimgid=249.jpeg', NULL, NULL, NULL, 1, 0, NULL);
+(249, 'Nguyen Khac Hieu', 'admin2205', '$pbkdf2-sha256$29000$iXHunbOWEqJUSimltHZujQ$dzVuhYrthr3PiCsFDrucMVWbNOH1fsHHRrNpIis8U8U', 'hieunkbb@gmail.com', NULL, 'Nữ', NULL, NULL, NULL, NULL, '127.0.0.1', '127.0.0.1', '2024-07-02 07:56:10', 1, 1, 'http://127.0.0.1:2345/api/group/image/groupimgid=249.jpeg', NULL, NULL, 'Ha Noi', 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -1102,13 +1156,13 @@ ALTER TABLE `Boxs`
 -- AUTO_INCREMENT for table `CommentFavorite`
 --
 ALTER TABLE `CommentFavorite`
-  MODIFY `CommentFavoriteID` int NOT NULL AUTO_INCREMENT;
+  MODIFY `CommentFavoriteID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `CommentPhotos`
 --
 ALTER TABLE `CommentPhotos`
-  MODIFY `PhotoID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `PhotoID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `Districts`
@@ -1126,13 +1180,13 @@ ALTER TABLE `Favorite`
 -- AUTO_INCREMENT for table `ForumPhotos`
 --
 ALTER TABLE `ForumPhotos`
-  MODIFY `PhotoID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `PhotoID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `ForumPosts`
 --
 ALTER TABLE `ForumPosts`
-  MODIFY `PostID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `PostID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `gmail_from`
@@ -1162,7 +1216,7 @@ ALTER TABLE `Locations`
 -- AUTO_INCREMENT for table `PostComments`
 --
 ALTER TABLE `PostComments`
-  MODIFY `CommentID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `CommentID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `Provinces`
@@ -1174,7 +1228,7 @@ ALTER TABLE `Provinces`
 -- AUTO_INCREMENT for table `RefreshTokens`
 --
 ALTER TABLE `RefreshTokens`
-  MODIFY `RefreshTokenID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `RefreshTokenID` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `Relationships`
