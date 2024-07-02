@@ -401,7 +401,7 @@ def result(conflicting_auctions):
         result["Images"] = listimgs
         listjosnauctions.append(result)
     return listjosnauctions
-def filterAuctionbytime():
+def filterAuction():
     try:
         listjosnauctions = []
         if not request.json:

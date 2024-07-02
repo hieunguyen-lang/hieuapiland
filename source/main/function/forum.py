@@ -56,17 +56,22 @@ def addNewPost():
                 )
                 db.session.add(post)
                 db.session.commit()
-
-                # Add associated images (PhotoURL) if provided
-                if "PhotoURL" in json_data and isinstance(json_data["PhotoURL"], list):
-                    for item in json_data["PhotoURL"]:
-                        image_post = ForumPhotos(
-                            PostID=post.PostID, 
-                            PhotoURL=base64ToByte(item), 
-                            UploadTime=datetime.now()
-                        )
-                        db.session.add(image_post)
-                    db.session.commit()
+                str1 = "http://127.0.0.1:2345/api/post/image/"
+                str2 = "Postid="
+                str3 = "/home/hieu/Downloads/hieuapiland/source/images/postimg/"
+                if json_data["Images"]:
+    
+                    for item in json_data["Images"]:
+                        try:
+                            image_post = ForumPhotos(
+                                PostID=post.PostID, 
+                                PhotoURL=saveandreduceimg(item, str1, str2, str3), 
+                                UploadTime=datetime.now()
+                            )
+                            db.session.add(image_post)
+                            db.session.commit()
+                        except:
+                            db.session.rollback()
 
                 # Retrieve and return the newly created post
                 post_id = post.PostID
@@ -114,13 +119,8 @@ def viewPost(PostID):
         post_favorite_count = Favorite.query.filter(
             and_(Favorite.PostID == PostID, Favorite.FavoriteType == 1)
         ).count()
-        ListImgPost = ForumPhotos.query.filter(ForumPhotos.PostID == PostID).all()
-        if ListImgPost:
-            for item in ListImgPost:
-                result = dict()
-                result["Img"]= item.PhotoURL
-            data.append(result)
-        print(post)
+        ListImgPosts = ForumPhotos.query.filter(ForumPhotos.PostID == PostID).all()
+
         if post:
             post_data = dict ()
             post_data["UserID"]= post.UserID
@@ -134,11 +134,14 @@ def viewPost(PostID):
             post_data["FavoriteNumber"]= post_favorite_count
             
             data.append(post_data)
-          
+        post_img = []
+        if ListImgPosts:
+            for item in ListImgPosts:
+                post_img.append(item.PhotoURL)
+            data.append(post_img)
 
-            return jsonify(data)
-        else:
-            return {"status": 404, "message": "Post not found"}
+        return jsonify(data)
+        
 
     except Exception as e:
         print(f"Error: {e}")

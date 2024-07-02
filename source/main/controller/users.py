@@ -10,6 +10,7 @@ s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 #check online for a user
 app.add_url_rule('/api/checkOnline/<UserID>', methods=['GET'], view_func=checkOnline)
 
+app.add_url_rule('/api/listalluser', methods=['GET'], view_func=listalluser)
 #check online for all user
 app.add_url_rule('/api/checkOnlineAll', methods=['GET'], view_func=checkOnlineForAllUsers)
 

@@ -23,6 +23,7 @@ app.config["SECRET_KEY"] = "devsenior"
 app.config['Image_FOLDERS'] = [
     '/home/hieu/Downloads/hieuapiland/source/images/profileimg',
     '/home/hieu/Downloads/hieuapiland/source/images/groupimg',
+    '/home/hieu/Downloads/hieuapiland/source/images/postimg',
     # Thêm các thư mục khác nếu cần
 ]
 app.config["SECURITY_PASSWORD_SALT"] = "devsenior"

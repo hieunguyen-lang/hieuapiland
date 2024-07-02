@@ -6,5 +6,5 @@ class CommentPhotos(db.Model):
     __tablename__ = 'CommentPhotos'
     PhotoID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     CommentID = db.Column(db.Integer, db.ForeignKey('PostComments.CommentID'))
-    PhotoURL = db.Column(db.LargeBinary, nullable=False)
+    PhotoURL = db.Column(db.String(250), nullable=True)
     UploadTime = db.Column(db.DateTime, default=db.func.current_timestamp())

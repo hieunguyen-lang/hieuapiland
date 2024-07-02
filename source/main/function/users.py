@@ -679,7 +679,7 @@ def loginUser():
                     db.session.add(location_login)
 
                 db.session.commit()
-                response = jsonify({"msg": "login successful","refreshtoken": refresh_token, "access_token": access_token, "role": user.Role})
+                response = jsonify({"msg": "login successful","refreshtoken": refresh_token, "access_token": access_token, "role": user.Role, "UserID": user.UserID})
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
                 return response
@@ -828,29 +828,6 @@ async def forgotPassword():
         )
 
 
-"""def forgot(Email):
-    try:
-        json = request.json
-        user = Users.query.filter(Users.Email == Email).first()
-        if not user:
-            return "Your account does not exist!"
-        else:
-            user.Password = pbkdf2_sha256.hash(json["Password"])
-            db.session.commit()
-            return "Updated password successfully!"
-    except Exception as e:
-        return e
-"""
-
-"""def confirmForgotPassword(token):
-    try:
-        json = s.loads(token, salt=app.config["SECURITY_PASSWORD_SALT"], max_age=600)
-        forgot(json)
-
-    except Exception as e:
-        print(e)
-        return "Your link was expired!!!!. Try again"
-    return "Updated password succsess """
 
 
 def changePassword():
@@ -1012,17 +989,26 @@ def changeGender(id):
             "message": "Cant Change Gender",
         }, 200
 
+def listalluser():
+    users = Users.query.all()
+    result = []
+    for item in users:
+        data = dict()
+        data["userid"] = item.UserID
+        data["UserName"] = item.Username
+        data["Email"] = item.Email
+        result.append(data)
+    return result
 
 # Change updateprofile
 def updateprofile():
     try:
-        if request.method == "PATCH":
             current_user = get_jwt_identity()
             CurrentUserID = current_user.get("UserID")
             json_data = request.json
             user = Users.query.filter(Users.UserID == CurrentUserID).first()
-            str1 = "http://127.0.0.1:2345/api/group/image/"
-            str2 = "groupimgid="
+            str1 = "http://127.0.0.1:2345/api/profile/image/"
+            str2 = "profileimgid="
             str3 = "/home/hieu/Downloads/hieuapiland/source/images/profileimg/"
             if user:
                 if json_data["avatarLink"]:
@@ -1032,8 +1018,23 @@ def updateprofile():
                                 jsonify({"Status": 200, "message": "avatarLink update successfully!"}),
                                 200,
                             )      
-                else:
-                    return "Invalid or missing avatarLink field in JSON data", 400
+                if json_data["FullName"]:
+                    user.FullName = json_data["FullName"]
+                    db.session.commit()
+
+                if json_data["Gender"]:
+                    user.Gender = json_data["Gender"]
+                    db.session.commit()
+ 
+                if json_data["Phone"]:
+                    user.Phone = json_data["Phone"]
+                    db.session.commit()
+                if json_data["BirthPlace"]:
+                    user.BirthPlace = json_data["BirthPlace"]
+                    db.session.commit()
+                return make_response(
+                                jsonify({"Status": 200, "message": "update successfully!"}),200
+                )
             else:
                 return "User not found", 404
     except Exception as e:

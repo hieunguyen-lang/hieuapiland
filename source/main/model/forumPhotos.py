@@ -6,5 +6,5 @@ class ForumPhotos(db.Model):
     __tablename__ = 'ForumPhotos'
     PhotoID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     PostID = db.Column(db.Integer, db.ForeignKey('ForumPosts.PostID'))
-    PhotoURL = db.Column(db.LargeBinary, nullable=False)
+    PhotoURL = db.Column(db.String(250), nullable=False)
     UploadTime = db.Column(db.DateTime, default=db.func.current_timestamp())

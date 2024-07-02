@@ -1,5 +1,5 @@
-from flask import jsonify, request, make_response
-from source import db
+from flask import jsonify, request, make_response, send_from_directory
+from source import db, app
 from source.main.extend import *
 from source.main.model.postComments import PostComments
 from source.main.model.commentFavorite import CommentFavorite
@@ -9,91 +9,95 @@ from source.main.model.commentPhotos import CommentPhotos
 from flask_mail import *
 from datetime import datetime
 from sqlalchemy.sql import and_
-
-def getAllComment(PostID, UserID):
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+def getAllComment(PostID):
     try:
-        all_comment = (
-            db.session.query(
-                PostComments,
-                CommentFavorite.FavoriteType.label('FavoriteType'),
-                CommentPhotos.PhotoURL.label('PhotoURL'),
-                Users.Username.label('Username'),
-                Users.FullName.label('FullName'),
-                Users.avatarLink.label('avatarLink')
-            )
-            .select_from(PostComments)
-            .outerjoin(CommentFavorite, CommentFavorite.CommentID == PostComments.CommentID)
-            .outerjoin(CommentPhotos, CommentPhotos.CommentID == PostComments.CommentID)
-            .outerjoin(Users, Users.UserID == PostComments.UserID)  # Join với bảng Users
-            .filter(PostComments.PostID == PostID)
-            .order_by(PostComments.CommentTime.desc())
-            .all()
-        )
-
+        comments = PostComments.query.filter(PostComments.PostID == PostID)
         data = []
-        for comment, favorite_type, photo_url, username, full_name, avatar_link in all_comment:
-            # favorite_exists = (
-            # db.session.query(CommentFavorite)
-            # .filter(CommentFavorite.UserID == UserID, CommentFavorite.CommentID == comment.CommentID)
-            # .first())
-            # is_favorited = favorite_exists is not None
-
-            favorite = db.session.query(CommentFavorite).filter(CommentFavorite.CommentID == comment.CommentID)
+        for item in comments:
             
+            favorite = CommentFavorite.query.filter(CommentFavorite.CommentID == item.CommentID)
+            commentimg = CommentPhotos.query.filter(CommentPhotos.CommentID == item.CommentID).first()
+            if commentimg:
+                img = commentimg.PhotoURL
+            else:
+                img = None
+            user = Users.query.filter(Users.UserID == item.UserID).first()
             favorite_count = favorite.count()
-            favorite_exists = favorite.filter(CommentFavorite.UserID == UserID).first()
-            is_favorited = favorite_exists is not None
             comment_info = {
-                'PostID': comment.PostID,
-                'UserID': comment.UserID,
-                'Avatar': byteToString(avatar_link),
-                'Username': username,
-                'FullName': full_name,
-                'Content': comment.Content,
-                'CommentTime': comment.CommentTime,
-                'CommentUpdateTime': comment.CommentUpdateTime,
-                'FavoriteType': favorite_type,
-                'PhotoURL': byteToString(photo_url),
-                'IsFavorited': is_favorited,
+                'PostID': item.PostID,
+                'UserID': item.UserID,
+                'Avatar': user.avatarLink,
+                'Username': user.Username,
+                'FullName': user.FullName,
+                'Content': item.Content,
+                'CommentTime': item.CommentTime,
+                'CommentUpdateTime': item.CommentUpdateTime,
                 'FavoriteCount': favorite_count,
-                'CommentID': comment.CommentID
+                'CommentID': item.CommentID,
+                'CmtPhoto': img
+               
             }
             data.append(comment_info)
 
-        return {'status': 200, 'Comments': data}
+        return data
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 400, 'message': 'An error occurred when getting all comments'}))
 
     
-def addComment(UserID, PostID):
+def addComment(PostID):
     try:
+        current_user = get_jwt_identity()
+        user_role = current_user.get('Role')
+        userid = current_user.get('UserID')
         json_data = request.json
         post = ForumPosts.query.filter(ForumPosts.PostID == PostID).first()
-        user = Users.query.filter(Users.UserID == UserID).first()
-        if post and user:
-            comment = PostComments(PostID=PostID, UserID=UserID, Content=json_data['Content'],CommentTime=datetime.now(), CommentUpdateTime=datetime.now())
+        str1 = "http://127.0.0.1:2345/api/post/image/"
+        str2 = "commentimgid="
+        str3 = "/home/hieu/Downloads/hieuapiland/source/images/postimg/"
+        if post and json_data["Content"] and json_data["Images"] is None:
+            comment = PostComments(PostID=PostID, UserID=userid, Content=json_data['Content'],CommentTime=datetime.now(), CommentUpdateTime=datetime.now())
             db.session.add(comment)
             db.session.commit()
-            
-            if 'PhotoURL' in json_data and isinstance(json_data['PhotoURL'], list):
-                for url in json_data['PhotoURL']:
-                    image_comment = CommentPhotos(CommentID=comment.CommentID, PhotoURL=base64ToByte(url), UploadTime=datetime.now())
-                    db.session.add(image_comment)
-
-            db.session.commit()
-            
+            commentid = comment.CommentID
             return make_response(jsonify({'Status': 200, 'message': 'Add comment successfully!'}))
-        else:
-            return make_response(jsonify({'Status': 400, 'message': 'Post not found!'}))
+        if post and json_data["Content"] and json_data["Images"]:
+            try:
+                comment = PostComments(PostID=PostID, UserID=userid, Content=json_data['Content'],CommentTime=datetime.now(), CommentUpdateTime=datetime.now())
+                db.session.add(comment)
+                db.session.commit()
+                commentid = comment.CommentID
+                plus = 0
+                for item in json_data['Images']:
+                    image_comment = CommentPhotos(
+                                                    CommentID=commentid, 
+                                                    PhotoURL=saveandreduceimg(item, str1, str2, str3), 
+                                                    UploadTime=datetime.now()
+                                                    )
+
+                    db.session.add(image_comment)
+                    db.session.commit()
+                    
+                        
+                return make_response(jsonify({'Status': 200, 'message': 'Add comment successfully!'}))
+            except Exception as e:
+                print(e)
+                db.session.rollback()
+                return make_response(jsonify({'Status': 400, 'message': 'Bad Request!'}))
     except Exception as e:
+        print(e)
+        db.session.rollback()
         return make_response(jsonify({'Status':500,'message':'An error occurred when get add comment!'}))
     
     
-def favoriteComment(UserID, CommentID):
+def likecomment(CommentID):
     try:
-        comment_favorite = CommentFavorite.query.filter(and_(CommentFavorite.UserID == UserID, CommentFavorite.CommentID == CommentID)).first()
-
+        current_user = get_jwt_identity()
+        userid = current_user.get('UserID')
+        comment_favorite = CommentFavorite.query.filter(
+            and_(CommentFavorite.UserID == userid, CommentFavorite.CommentID == CommentID)).first()
+        
         if comment_favorite:
             db.session.delete(comment_favorite)
             db.session.commit()
@@ -107,12 +111,11 @@ def favoriteComment(UserID, CommentID):
             200,
 
             )
-        else:
-            new_favorite = CommentFavorite(UserID=UserID, CommentID=CommentID, FavoriteType=True, FavoriteTime=datetime.now())
+        if comment_favorite is None:
+            new_favorite = CommentFavorite(UserID=userid, CommentID=CommentID, FavoriteType=True, FavoriteTime=datetime.now())
             db.session.add(new_favorite)
             db.session.commit()
             return make_response(jsonify({'status': 200, 'message':'Favorite Sucessfully!'}))
-
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 500, 'message': 'An error occurred while favoriting the post'}), 500)
@@ -164,33 +167,95 @@ def removeFavoriteComment(CommentID):
     
 def removeComment(CommentID):
     try:
+        current_user = get_jwt_identity()
+        userrole = current_user.get('Role')
+        userid = current_user.get('UserID')
         comment = PostComments.query.filter_by(CommentID=CommentID).first()
-        
-        if comment:
-            favorite_to_delete = CommentFavorite.query.filter_by(CommentID=CommentID).all()
+        if userrole == 1:
+            comment = PostComments.query.filter_by(CommentID=CommentID).first()
             
-            if favorite_to_delete:
-                for favorite in favorite_to_delete:
-                    db.session.delete(favorite)
+            if comment:
+                favorite_to_delete = CommentFavorite.query.filter_by(CommentID=CommentID).all()
                 
-            images_to_delete = CommentPhotos.query.filter_by(CommentID=CommentID).all()
-            
-            if images_to_delete:
-                for image in images_to_delete:
-                    db.session.delete(image)
+                if favorite_to_delete:
+                    for favorite in favorite_to_delete:
+                        db.session.delete(favorite)
+                    
+                images_to_delete = CommentPhotos.query.filter_by(CommentID=CommentID).all()
+                
+                if images_to_delete:
+                    for image in images_to_delete:
+                        db.session.delete(image)
 
-            comment_to_delete = PostComments.query.filter_by(CommentID=CommentID).first()
-            db.session.delete(comment_to_delete)
-            db.session.commit()
+                comment_to_delete = PostComments.query.filter_by(CommentID=CommentID).first()
+                db.session.delete(comment_to_delete)
+                db.session.commit()
+                    
+                return make_response(jsonify({'status': 200, 'message': 'Comment deleted successfully'}), 200)
+            else:
+                return make_response(jsonify({'status': 404, 'message': 'Comment not found!'}), 404)
+        if userid == comment.UserID:
+            comment = PostComments.query.filter_by(CommentID=CommentID).first()
+            
+            if comment:
+                favorite_to_delete = CommentFavorite.query.filter_by(CommentID=CommentID).all()
                 
-            return make_response(jsonify({'status': 200, 'message': 'Comment deleted successfully'}), 200)
-        else:
-            return make_response(jsonify({'status': 404, 'message': 'Comment not found!'}), 404)
-        
+                if favorite_to_delete:
+                    for favorite in favorite_to_delete:
+                        db.session.delete(favorite)
+                    
+                images_to_delete = CommentPhotos.query.filter_by(CommentID=CommentID).all()
+                
+                if images_to_delete:
+                    for image in images_to_delete:
+                        db.session.delete(image)
+
+                comment_to_delete = PostComments.query.filter_by(CommentID=CommentID).first()
+                db.session.delete(comment_to_delete)
+                db.session.commit()
+                    
+                return make_response(jsonify({'status': 200, 'message': 'Comment deleted successfully'}), 200)
+            else:
+                return make_response(jsonify({'status': 404, 'message': 'Comment not found!'}), 404)
     except Exception as e:
         print(e)
         return make_response(jsonify({'status': 500, 'message': str(e)}), 500)
-    
+def updateComment(CommentID):
+    current_user = get_jwt_identity()
+    userrole = current_user.get('Role')
+    userid = current_user.get('UserID')
+    json_data =request.json
+    comment = PostComments.query.filter_by(CommentID=CommentID).first()
+    commentimg = CommentPhotos.query.filter(CommentPhotos.CommentID == comment.CommentID).first()
+    print(commentimg)
+    str1 = "http://127.0.0.1:2345/api/post/image/"
+    str2 = "commentimgid="
+    str3 = "/home/hieu/Downloads/hieuapiland/source/images/postimg/"
+    if userid == comment.UserID:
+        try:
+            if json_data["Content"]:
+                comment.Content = json_data["Content"]
+                db.session.commit()
+            if json_data["PhotoURL"]:
+                if commentimg:
+                    try:
+                        folder_path ="/home/hieu/Downloads/hieuapiland/source/images/postimg"
+                        filenamestring = commentimg.PhotoURL
+                        print(filenamestring)
+                        filename = filenamestring.replace("http://127.0.0.1:2345/api/post/image/", "") 
+                        print(filename)
+                        delete_file_in_folder(folder_path ,filename)
+                        commentimg.PhotoURL = saveandreduceimg(json_data["PhotoURL"], str1, str2, str3)
+                        db.session.commit()   
+                    except:
+                        db.session.rollback()
+                if commentimg is None:
+                    commentimg.PhotoURL = saveandreduceimg(json_data["PhotoURL"], str1, str2, str3)
+                    db.session.commit()   
+            return make_response(jsonify({'status': 200, 'message': 'update  successfully'}), 200)  
+        except:
+            db.session.rollback()
+       
 def removeAllComment(PostID):
     try:
         post = ForumPosts.query.filter_by(PostID=PostID).first()
@@ -210,3 +275,6 @@ def removeAllComment(PostID):
             return make_response(jsonify({'status': 404, 'message': 'Comment not found'}), 404)
     except:
         return make_response(jsonify({'Status':500,'message':'An error occurred!'}))
+    
+def get_postimg(path):
+    return send_from_directory(app.config['Image_FOLDERS'][2], path)

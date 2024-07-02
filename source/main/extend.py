@@ -1,7 +1,7 @@
 from PIL import Image
 import base64
 from io import BytesIO
-
+import os
 def byteToString(byte):
     if byte:
         base64_string = base64.b64encode(byte).decode('utf-8')
@@ -42,7 +42,29 @@ def resize_and_compress_base64_image(base64_string):
     compressed_base64_string = base64.b64encode(output_buffer.getvalue()).decode('utf-8')
     
     return compressed_base64_string
+def resize_base64_image(base64_string):
+    target_size=(1024, 1024)
+    # Giải mã dữ liệu base64 thành dữ liệu ảnh
+    image_data = base64.b64decode(base64_string)
+    img = Image.open(BytesIO(image_data))
+    if img.mode == 'RGBA':
+        img = img.convert('RGB')
+    # Lấy kích thước ban đầu của ảnh
+    width, height = img.size
 
+    # Tính toán tỉ lệ giảm
+    ratio = min(target_size[0] / width, target_size[1] / height)
+
+    # Giảm kích thước ảnh với tỉ lệ ban đầu
+    new_width = int(width * ratio)
+    new_height = int(height * ratio)
+    img = img.resize((new_width, new_height), Image.LANCZOS)
+
+    # Chuyển đổi ảnh đã giảm kích thước thành base64
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG", quality=85)
+    resized_base64_string = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    return resized_base64_string
 def save_base64_image_to_file(base64_string, output_file):
     with open(output_file, "wb") as img_file:
         img_file.write(base64.b64decode(base64_string))
@@ -59,3 +81,26 @@ def saveandresizeimage(base64_string, userid, str1, str2,str3):
     avartarpath = pathimg(userid, str1, str2)
     save_base64_image_to_file(resized_compressed_base64_string, output_file)
     return avartarpath
+import uuid
+
+def joinstring2(id, str3, str2):  
+    result = str3 + str2 + str(id) + ".jpeg"
+    return result
+def pathimg2(id, str1, str2):
+    result = str1 + str2 + str(id) + ".jpeg"
+    return result
+def saveandreduceimg(base64_string, str1, str2,str3):
+    unique_id = uuid.uuid4()
+    resize_base64 = resize_base64_image(base64_string)
+    output_file = joinstring2(unique_id,str3, str2)
+    avartarpath = pathimg2(unique_id, str1, str2)
+    save_base64_image_to_file(resize_base64, output_file)
+    return avartarpath
+
+def delete_file_in_folder(folder_path, file_name):
+    file_path = os.path.join(folder_path, file_name)
+    try:
+        os.remove(file_path)
+        print(f"Đã xoá file '{file_name}' thành công.")
+    except OSError as e:
+        print(f"Lỗi: {file_path} : {e.strerror}")

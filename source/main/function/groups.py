@@ -220,7 +220,7 @@ def removeGroup(GroupID):
             500,
         )
 
-def changeImgGroup(GroupID):
+def update_group(GroupID):
     try:
         current_user = get_jwt_identity()
         user_role = current_user.get('Role')
@@ -228,11 +228,12 @@ def changeImgGroup(GroupID):
             json_data = request.json
             group = Groups.query.filter(Groups.GroupID == GroupID).first()
             str1 = "http://127.0.0.1:2345/api/profile/image/"
-            str2 = "profileimgid="
+            str2 = "groupimgid="
             str3 = "/home/hieu/Downloads/hieuapiland/source/images/groupimg/"
             if group:
                 group.avatarLink = saveandresizeimage(json_data["avatarLink"],GroupID, str1, str2, str3),
-                
+                group.GroupName = json_data["GroupName"],
+                group.BoxID = json_data["BoxID"]
             db.session.commit()
             return make_response(
                 jsonify({"status": 200, "message": "Change Image Successfully"}), 200, 
